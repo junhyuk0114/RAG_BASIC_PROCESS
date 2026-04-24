@@ -27,14 +27,17 @@ ollama pull bge-m3
 - **Interface**: FastAPI를 통한 API 서버 기능 및 대화형 챗봇 모드 지원
 
 ## 4. 프로젝트 구조
-RAG_OLLAMA
+```text
+RAG_OLLAMA/
 ├── codeset/
 │   ├── RAG_OLLAMA_수정본.ipynb       # 메인 실습 노트북
 │   ├── requirements_fine_rag.txt    # 필요 라이브러리 목록
 │   └── dataset/
 │       └── 모집요강.pdf               # 분석 대상 PDF 문서
+├── .env                              # API 키 및 환경 변수 설정 파일
 ├── vector_db/                       # Chroma DB 영구 저장 폴더
 └── models/                          # GGUF 등 로컬 모델 저장 폴더
+```
 
 ## 5. 코딩 스타일
 - **현대적 Python**: Python 3.12+ 환경 권장
@@ -47,3 +50,12 @@ RAG_OLLAMA
 - **예외 처리**: 모델 로딩 실패, API 호출 오류 등을 위한 `try-except` 블록 적용
 - **데이터 검증**: FastAPI 구현 시 `Pydantic`을 활용한 입출력 데이터 유효성 검사
 - **필터링**: 프롬프트를 통해 외부 지식 활용을 제한하고 주어진 문서(Context) 내에서만 답변하도록 강제
+
+## 7. 주요 변경 사항 (원본 대비)
+기존 `RAG_ollama_원본.ipynb`에서 `RAG_OLLAMA_수정본.ipynb`로 업데이트되면서 변경된 주요 사항입니다.
+
+- **Colab 의존성 완전 제거**: Google Colab 전용 코드 및 `inColab` 체크 로직을 삭제하고 로컬 Jupyter 환경에 최적화했습니다.
+- **보안 강화 (.env 도입)**: 코드 내에 하드코딩되어 있던 API 키와 토큰을 프로젝트 루트의 `.env` 파일에서 로드하도록 변경했습니다.
+- **Jupyter 비동기 오류 해결**: `asyncio.run()` 충돌 문제를 해결하기 위해 **Top-level await** 및 `uvicorn.Server` 커스텀 실행 로직을 적용했습니다.
+- **의존성 통합 관리**: 노트북 내부의 `!pip install` 명령어를 모두 제거하고 `requirements_fine_rag.txt`로 관리 체계를 일원화했습니다.
+- **Ngrok 안정화**: 서버 재시작 시 기존 터널을 자동으로 정리하는 예외 처리 로직을 추가했습니다.
